@@ -2,7 +2,7 @@
 from re import I
 from game.ship import *
 from game.context import Context
-import jsonpickle
+#import jsonpickle
 from game.display import announce
 import game.config as config
 from game.items import *
@@ -47,8 +47,8 @@ class Player (Context):
         self.verbs['quit'] = self
         self.verbs['status'] = self
         self.verbs['go'] = self
-        self.verbs['save'] = self
-        self.verbs['load'] = self
+        #self.verbs['save'] = self
+        #self.verbs['load'] = self
         self.verbs['debug'] = self
         self.verbs['map'] = self
         self.verbs['inventory'] = self
@@ -81,27 +81,27 @@ class Player (Context):
         elif (verb == "skills"):
             for c in self.get_pirates():
                 c.print_skills ()
-        elif (verb == "save"):
-            if "jsonpickle" not in sys.modules:
-                announce ("jsonpickle hasn't be imported. Saving is impossible.")
-            elif self.location != self.ship:
-                announce ("Saving is only possible abord ship.")
-            else:
-                announce ("saving...", end="",pause=False)
-                f = open ("save.json", "w")
-                f.write (jsonpickle.encode (self))
-                f.close()
-                announce ("..done")
-        elif (verb == "load"):
-            if "jsonpickle" not in sys.modules:
-                announce ("jsonpickle hasn't be imported. Loading is impossible.")
-            elif self.location != self.ship:
-                announce ("Loading is only possible abord ship.")
-            else:
-                with open ("save.json") as f:
-                    s = f.read()    
-                config.the_player = jsonpickle.decode (s)
-                self.go = True
+##        elif (verb == "save"):
+##            if "jsonpickle" not in sys.modules:
+##                announce ("jsonpickle hasn't be imported. Saving is impossible.")
+##            elif self.location != self.ship:
+##                announce ("Saving is only possible abord ship.")
+##            else:
+##                announce ("saving...", end="",pause=False)
+##                f = open ("save.json", "w")
+##                f.write (jsonpickle.encode (self))
+##                f.close()
+##                announce ("..done")
+##        elif (verb == "load"):
+##            if "jsonpickle" not in sys.modules:
+##                announce ("jsonpickle hasn't be imported. Loading is impossible.")
+##            elif self.location != self.ship:
+##                announce ("Loading is only possible abord ship.")
+##            else:
+##                with open ("save.json") as f:
+##                    s = f.read()    
+##                config.the_player = jsonpickle.decode (s)
+##                self.go = True
         elif (verb == "status"):
             announce ("Day " + str(self.world.get_day()),pause=False)
             self.status()
