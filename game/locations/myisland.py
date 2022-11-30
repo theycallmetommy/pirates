@@ -1,4 +1,4 @@
-
+from game.dialogue import Dialogue
 from game import location
 from game import config
 from game.display import announce
@@ -37,7 +37,7 @@ class Port_with_ship (location.SubLocation):
         self.verbs['talk'] = self
 
     def enter (self):
-        announce ("You arrive at a small port. Your ship is at anchor at a small dock to the south. There is a stout, cheerful looking man waiting at a stand on the dock.")
+        announce ("You arrive at a small port. Your ship is at anchor at a small dock to the south. There is a tall, cheerful looking man waiting at a stand on the dock.")
     
     def process_verb (self, verb, cmd_list, nouns):
         if (verb == "south"):
@@ -47,7 +47,7 @@ class Port_with_ship (location.SubLocation):
         elif (verb == "north"):
             config.the_player.next_loc = self.main_location.locations["field"]
         elif (verb == "east" or verb == "west"):
-            announce ("You go to walk away, but feel bad for leaving the stout man alone. You should try to talk to him.")
+            announce ("You look off to the " + verb + ". It's an empty beach. Surely you have something better to do, right?")
         elif verb == "talk":
             announce ("You approach the man, who gleefully smiles at your approach. What would you like to say?")
             greetings = ["Hello.", "Arrr!", "*stab the man*"]
