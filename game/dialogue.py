@@ -21,8 +21,9 @@ class Dialogue():
             if self.initiative == True:
                 announce(self.name + ": " + random.choice(openings))
                 choice = menu(known_insults)
-                
-                
+            else:
+                choice = menu(known_openings)
+                announce(self.name + ": " + random.choice(insults))
             
         
         
