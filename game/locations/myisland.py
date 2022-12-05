@@ -1,4 +1,5 @@
-from game.dialogue import Dialogue
+from game.dialogue import converse
+from game.dialogue import Stan
 from game import location
 from game import config
 from game.display import announce
@@ -50,13 +51,14 @@ class Port_with_ship (location.SubLocation):
             announce ("You look off to the " + verb + ". It's an empty beach. Surely you have something better to do, right?")
         elif verb == "talk":
             announce ("You approach the man, who gleefully smiles at your approach. What would you like to say?")
-            greetings = ["Hello.", "Arrr!", "*stab the man*"]
-            choice = menu(greetings)
-            print(choice)
-            if (choice == 0 or choice == 1):
-                announce("The man stares back at you, saying nothing, as he has not been programmed to respond yet.")
-            if choice == 2:
-                announce("The man continues to smile back at you, seemingly unaware of the sword through his stomach. You feel as though you should leave.")
+            converse(Stan)
+            # greetings = ["Hello.", "Arrr!", "*stab the man*"]
+            # choice = menu(greetings)
+            # print(choice)
+            # if (choice == 0 or choice == 1):
+                # announce("The man stares back at you, saying nothing, as he has not been programmed to respond yet.")
+            # if choice == 2:
+                # announce("The man continues to smile back at you, seemingly unaware of the sword through his stomach. You feel as though you should leave.")
 
 
 class Field (location.SubLocation):
