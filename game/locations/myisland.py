@@ -1,10 +1,14 @@
+import random
 from game.dialogue import converse
-from game.dialogue import Stan
+from game.dialogue import Character
 from game import location
 from game import config
 from game.display import announce
 from game.display import menu
 from game.events import *
+from game.insult_swordfighting import Insult_Swordfight
+from game.insult_swordfighting import Enemy
+
 
 class Island (location.Location):
 
@@ -19,7 +23,7 @@ class Island (location.Location):
         self.locations["field"] = Field(self)
 
     def enter (self, ship):
-        print ("arrived at an island")
+        print ("You see an island approaching. Rather, You are approaching an island, but still.")
 
     def visit (self):
         config.the_player.location = self.starting_location
@@ -51,14 +55,8 @@ class Port_with_ship (location.SubLocation):
             announce ("You look off to the " + verb + ". It's an empty beach. Surely you have something better to do, right?")
         elif verb == "talk":
             announce ("You approach the man, who gleefully smiles at your approach. What would you like to say?")
-            converse(Stan)
-            # greetings = ["Hello.", "Arrr!", "*stab the man*"]
-            # choice = menu(greetings)
-            # print(choice)
-            # if (choice == 0 or choice == 1):
-                # announce("The man stares back at you, saying nothing, as he has not been programmed to respond yet.")
-            # if choice == 2:
-                # announce("The man continues to smile back at you, seemingly unaware of the sword through his stomach. You feel as though you should leave.")
+            converse(Stan())
+            
 
 
 class Field (location.SubLocation):
@@ -72,15 +70,36 @@ class Field (location.SubLocation):
 
         self.verbs['fight'] = self
     def enter (self):
-        actually_made_people_yet = False
-        description = "You walk into an open field."
-        if actually_made_people_yet == False:
-            description += " There's currently no one to fight, but feel free to try anyways."
+        description = "You walk into an open field, full of pirates looking for a fight."
         announce (description)
     def process_verb (self, verb, cmd_list, nouns):
         if (verb == "south" or verb == "north" or verb == "east" or verb == "west"):
             config.the_player.next_loc = self.main_location.locations["port"]
             #eventually this is gonna just be for south, i'll have something else north east and west
         if verb == "fight":
-            announce("You wonder when people will be added to this island. Somehow, somewhere, you hear a programmer sigh.")
+            Insult_Swordfight.fight(Pirate())
+            #announce("You wonder when people will be added to this island. Somehow, somewhere, you hear a programmer sigh.")
 
+#All Characters and Enemy types
+class Stan(Character):
+    def __init__(self):
+        n = "Stan"
+        o = {"TestPlayer1":"TestStan1", "TestPlayer2":"TestStan2", "Exit":"TestStanBye"}
+        g = "Hello!"
+        super().__init__(n, o, g)
+
+class Pirate(Enemy):
+    def __init__(self):
+        n = random.choice(["john", "jon", "jhon"])
+        o = []
+        r = []
+        for k,v in Insult_Swordfight.__MASTER_LIST__.items():
+            o.append(k)
+            r.append(v)
+        super().__init__(n, o, r, random.choice([True, False]))
+ 
+# class SwordMaster(Enemy):
+    # def __init__(self):
+        # openings = ["This is a test!"]
+        # responses = ["This is a different test!"]
+        # super().__init__("Sword Master", openings, responses, random.choice([True, False])
