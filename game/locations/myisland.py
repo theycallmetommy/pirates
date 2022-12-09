@@ -6,7 +6,7 @@ from game import config
 from game.display import announce
 from game.display import menu
 from game.events import *
-from game.insult_swordfighting import Insult_Swordfight
+from game.insult_swordfighting import Battle
 from game.insult_swordfighting import Enemy
 
 
@@ -77,7 +77,8 @@ class Field (location.SubLocation):
             config.the_player.next_loc = self.main_location.locations["port"]
             #eventually this is gonna just be for south, i'll have something else north east and west
         if verb == "fight":
-            Insult_Swordfight.fight(Pirate())
+            battle = Battle(Pirate())
+            battle.fight()
             #announce("You wonder when people will be added to this island. Somehow, somewhere, you hear a programmer sigh.")
 
 #All Characters and Enemy types
@@ -93,7 +94,7 @@ class Pirate(Enemy):
         n = random.choice(["john", "jon", "jhon"])
         o = []
         r = []
-        for k,v in Insult_Swordfight.__MASTER_LIST__.items():
+        for k,v in Battle.__MASTER_LIST__.items():
             o.append(k)
             r.append(v)
         super().__init__(n, o, r, random.choice([True, False]))
