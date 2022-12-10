@@ -6,6 +6,7 @@ from game import config
 from game.display import announce
 from game.display import menu
 from game.events import *
+from game import world
 from game.insult_swordfighting import Battle
 from game.insult_swordfighting import Enemy
 
@@ -125,8 +126,10 @@ class Tavern (location.SubLocation):
     def process_verb (self, verb, cmd_list, nouns):
         if verb == "east":
             config.the_player.next_loc = self.main_location.locations["field"]
-        if (verb == "talk" or verb == "drink"):
-            announce("work in progress")
+        if verb == "talk":
+            converse(TavernKeep(False))
+        if verb == "drink":
+            converse(TavernKeep(True))
 
 class House (location.SubLocation):
     def __init__ (self, m):
@@ -135,6 +138,7 @@ class House (location.SubLocation):
         self.verbs['west'] = self
         
         self.verbs['talk'] = self
+
     def enter(self):
         description = "You follow the path to the house of a local cartographer, who sits behind a desk studying his maps. Perhaps he has an idea where your home port is. Otherwise, the path back leads you to the west."
         announce(description)
@@ -143,16 +147,47 @@ class House (location.SubLocation):
         if verb == "west":
             config.the_player.next_loc = self.main_location.locations["field"]
         if verb == "talk":
-            announce("You'd love to talk to the cartographer, but it seems that he's so busy that he forgot to give himself a talk function. Get back to me on that later.")
-
+            converse(Cartographer())
         
 #All Characters and Enemy types
 class Stan(Character):
     def __init__(self):
-        n = "Stan"
-        o = {"TestPlayer1":"TestStan1", "TestPlayer2":"TestStan2", "Exit":"TestStanBye"}
-        g = "Hello!"
-        super().__init__(n, o, g)
+        options = {
+        "TestPlayer1":"TestStan1",
+        "TestPlayer2":"TestStan2",
+        "Exit":"TestStanBye"
+        }
+        super().__init__("Stan", options, "Hello!")
+
+class TavernKeep(Character):
+    def __init__(self, shop):
+        if shop == True:
+            options = {
+            "":"",
+            "":"",
+            "Exit":""
+            }
+            greeting = "Whatcha buying?"
+        else:
+            options = {
+            "":"",
+            "":"",
+            "Exit":""
+            }
+            greeting = "Here to chat?"
+        super().__init__("Tavernkeep", options, greeting)
+
+class Cartographer(Character):
+    def __init__(self):
+        options = {
+        "":"",
+        "Do you happen to know where my home port is?":"No offense to you, but I'm not exactly keen on giving out maps to random groups of obvious pirates. Perhaps if you could make a name for yourself, that could change.",
+        "Exit":"Well, have a good day then, come back if you need anything!"
+        }
+        if Character.sword_master_beaten == True:
+            options["Do you happen to know where my home port is?"] = "Well, if the Sword Master asks for a map, I suppose I can supply one\nYour home coordinates are " + "HOW THE FUCK DO I GET THE HOME COORDINATES?"
+            
+        super().__init__("Cartographer", options, "Well Hello!")
 
 class Pirate(Enemy):
     def __init__(self):

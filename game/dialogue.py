@@ -12,13 +12,14 @@ def converse(character):
         choice = menu(choices)
         announce(character.name + ' says: "' + responses[choice] + '"')
         if choices[choice] == "Exit":
-            break
+            return
     
 
 
 class Character:
-    #each character should have a name, and a dictionary of options and responses to choose from
-    def __init__(self, name, options, greeting):
+    sword_master_beaten = False
+    def __init__(self, name, options, greeting): #each character should have a name, and a dictionary of options and responses to choose from
         self.name = name
         self.options = options
         self.greeting = greeting
+        
