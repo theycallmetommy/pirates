@@ -42,8 +42,10 @@ class Port_with_ship (location.SubLocation):
         self.verbs['south'] = self
         self.verbs['east'] = self
         self.verbs['west'] = self
-
+        
+        self.verbs['coin'] = self
         self.verbs['talk'] = self
+        self.verbs['debug'] = self
 
     def enter (self):
         announce ("You arrive at a small port. Your ship is at anchor at a small dock to the south. There is a tall, cheerful looking man waiting at a stand on the dock.")
@@ -57,9 +59,18 @@ class Port_with_ship (location.SubLocation):
             config.the_player.next_loc = self.main_location.locations["field"]
         elif (verb == "east" or verb == "west"):
             announce ("You look off to the " + verb + ". It's an empty beach. Surely you have something better to do, right?")
+        elif verb == "coin":
+            announce ("You have " + str(Battle.coins) + " Macaque Island Treasure Coins.")
         elif verb == "talk":
             announce ("You approach the man, who gleefully smiles at your approach. What would you like to say?")
             converse(Stan())
+        elif verb == "debug":
+            for k,v in Battle.__MASTER_LIST__.items():
+                if k not in Battle.known_openings:
+                    Battle.known_openings.append(k)
+                if v not in Battle.known_responses:
+                    Battle.known_responses.append(v)
+            announce ("Cheater Cheater Pumpkin Eater")
             
 
 
@@ -72,10 +83,11 @@ class Field (location.SubLocation):
         self.verbs['east'] = self
         self.verbs['west'] = self
 
+        self.verbs['coin'] = self
         self.verbs['fight'] = self
     def enter (self):
-        description = 'You walk into an open field, full of pirates looking for a fight. To the north, you see a large mountain. To the east, you see a winding path. To the west, you see a building with a sign that reads "Scumm Bar".'
-        announce (description)
+        self.description = 'You walk into an open field, full of pirates looking for a fight. To the north, you see a large mountain. To the east, you see a winding path. To the west, you see a building with a sign that reads "Scumm Bar".'
+        announce (self.description)
     def process_verb (self, verb, cmd_list, nouns):
         if verb == "south":
             config.the_player.next_loc = self.main_location.locations["port"]
@@ -86,10 +98,12 @@ class Field (location.SubLocation):
             config.the_player.next_loc = self.main_location.locations["house"]
         if verb == "west":
             config.the_player.next_loc = self.main_location.locations["tavern"]
+        elif verb == "coin":
+            announce ("You have " + str(Battle.coins) + " Macaque Island Treasure Coins.")
         if verb == "fight":
             battle = Battle(Pirate())
             battle.fight()
-            announce(description)
+            announce(self.description)
 
 class Mountaintop (location.SubLocation):
     def __init__ (self, m):
@@ -97,25 +111,35 @@ class Mountaintop (location.SubLocation):
         self.name = "mountain"
         self.verbs['south'] = self
         
+        self.verbs['coin'] = self
         self.verbs['challenge'] = self
     
     def enter(self):
-        description = 'You make your way up the mountain and find yourself at a large, flat arena at its peak. The path back to the base snakes down to the south. A skilled swordswoman stands at its center, awaiting a worthy challenge.'
+        description = 'You make your way up the mountain and find yourself at a large, flat arena at its peak. The path back to the base snakes down to the south.'
+        if Character.sword_master_beaten == False:
+            description += ' A skilled swordswoman stands at its center, awaiting a worthy challenge.'
         announce(description)
         
     def process_verb (self, verb, cmd_list, nouns):
         if verb == "south":
             config.the_player.next_loc = self.main_location.locations["field"]
+        elif verb == "coin":
+            announce ("You have " + str(Battle.coins) + " Macaque Island Treasure Coins.")
         if verb == "challenge":
-            if len(Battle.known_openings) != 6:
+            if len(Battle.known_openings) < Battle.__SWORD__MASTER__LIMIT__:
                 announce("The Sword Master laughs at your challenge. It seems that you're not even worth her time at your skill level.")
-
+            if Character.sword_master_beaten == True:
+                announce("You have already earned the title of Sword Master")
+            else:
+                battle = MasterBattle(SwordMaster())
+                battle.fight()
 class Tavern (location.SubLocation):
     def __init__ (self, m):
         super().__init__(m)
         self.name = "tavern"
         self.verbs['east'] = self
         
+        self.verbs['coin'] = self
         self.verbs['talk'] = self
         self.verbs['drink'] = self
         
@@ -126,6 +150,8 @@ class Tavern (location.SubLocation):
     def process_verb (self, verb, cmd_list, nouns):
         if verb == "east":
             config.the_player.next_loc = self.main_location.locations["field"]
+        elif verb == "coin":
+            announce ("You have " + str(Battle.coins) + " Macaque Island Treasure Coins.")
         if verb == "talk":
             converse(TavernKeep(False))
         if verb == "drink":
@@ -137,6 +163,7 @@ class House (location.SubLocation):
         self.name = "house"
         self.verbs['west'] = self
         
+        self.verbs['coin'] = self
         self.verbs['talk'] = self
 
     def enter(self):
@@ -146,6 +173,8 @@ class House (location.SubLocation):
     def process_verb (self, verb, cmd_list, nouns):
         if verb == "west":
             config.the_player.next_loc = self.main_location.locations["field"]
+        elif verb == "coin":
+            announce ("You have " + str(Battle.coins) + " Macaque Island Treasure Coins.")
         if verb == "talk":
             converse(Cartographer())
         
@@ -163,8 +192,9 @@ class TavernKeep(Character):
     def __init__(self, shop):
         if shop == True:
             options = {
-            "":"",
-            "":"",
+            "LuckyDrink":"",
+            "SicknessDrink":"",
+            "InsultDrink":"",
             "Exit":""
             }
             greeting = "Whatcha buying?"
@@ -176,6 +206,23 @@ class TavernKeep(Character):
             }
             greeting = "Here to chat?"
         super().__init__("Tavernkeep", options, greeting)
+
+class Drink:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+class LuckyDrink(Drink):
+    def __init__(self):
+        super().__init__("LuckyDrink", 10)
+        #gives random crewmate Lucky
+class SicknessDrink(Drink):
+    def __init__(self):
+        super().__init__("SicknessDrink", 10)
+        #cures one crewmate of Sick
+class InsultDrink(Drink):
+    def __init__(self):
+        super().__init__("InsultDrink", 10)
+        #teaches player one new opening insult
 
 class Cartographer(Character):
     def __init__(self):
@@ -201,6 +248,77 @@ class Pirate(Enemy):
  
 class SwordMaster(Enemy):
     def __init__(self):
-        o = ["MasterOpening1", "MasterOpening2" ]
-        r = ["MasterResponse1", "MasterResponse2"]
+        o = [
+        "MasterTaunt",
+        "MasterOpening1",
+        "MasterOpening2",
+        "MasterOpening3",
+        "MasterOpening4",
+        "MasterOpening5",
+        "MasterOpening6",
+        "MasterOpening7"
+        ]
+        r = []
+        #self.valid_openings = []
+        for k,v in Battle.__MASTER_LIST__.items():
+            r.append(v)
+        #    self.valid_openings.append(k)
         super().__init__("Sword Master", o, r, True)
+        
+        
+class MasterBattle(Battle):
+    def init(self, enemy):
+        super().__init__(enemy)
+    
+    def checkFight(self):
+        if self.points == 4:
+            Character.sword_master_beaten = True
+            announce(self.name + " accepts defeat! You earn the title of Sword Master!")
+            return True
+        elif self.points == -2:
+            announce(self.name + " bests you in combat!")
+            #punishment for failure? sickness maybe?
+            return True
+        else:
+            return False
+    def fight(self):
+        points = 0
+        self.used_openings = []
+        self.valid_openings = []
+        for k in Battle.__MASTER_LIST__.keys():
+            self.valid_openings.append(k)
+        announce("Challenged the Sword Master!")
+        while self.checkFight() != True:
+            if self.initiative == True:
+                insult = random.choice(self.openings[1:])
+                announce(self.name + ": " + insult)
+                choice = menu(Battle.known_responses)
+                player = Battle.known_responses[choice]
+                player = self.responses.index(player)
+                if player == self.openings.index(insult):
+                    self.updateStatus("Success")
+                else:
+                    self.updateStatus("Failure")
+                self.initiative = False
+            else:
+                choice = menu(Battle.known_openings)
+                if choice == 0:
+                    announce(self.name + ": MasterTaunt")
+                    self.updateStatus("Failure")
+                else:
+                    player = Battle.known_openings[choice]
+                    if player in self.used_openings:
+                        announce(self.name + ": I see that your originality matches your skill, you poor excuse for a pirate!")
+                        self.updateStatus("Failure")
+                    else:
+                        self.used_openings.append(player)
+                        player = self.valid_openings.index(player)
+                        insult = self.responses[player]
+                        if random.randrange(0, 2) == 0:
+                            announce(self.name + ": " + insult)
+                            self.updateStatus("Failure")
+                        else:
+                            announce(self.name + ": A lucky blow, but you're still no match for my rapier wit!")
+                            self.updateStatus("Draw")
+                self.initiative = True
+        

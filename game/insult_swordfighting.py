@@ -4,13 +4,20 @@ import random
 
 
 class Battle:
+    coins = 0
     known_openings = ["Arrr!"]
     known_responses = ["That the best you can do?"]
     __MASTER_LIST__ = {
     "Arrr!":"That the best you can do?",
     "ExampleOpen1":"ExampleResponse1",
-    "ExampleOpen2":"ExampleResponse2"
+    "ExampleOpen2":"ExampleResponse2",
+    "ExampleOpen3":"ExampleResponse3",
+    "ExampleOpen4":"ExampleResponse4",
+    "ExampleOpen5":"ExampleResponse5",
+    "ExampleOpen6":"ExampleResponse6",
+    "ExampleOpen7":"ExampleResponse7"
     } #dictionary of all opening/response pairings
+    __SWORD__MASTER__LIMIT__ = 6
     def __init__(self, enemy):
         self.name = enemy.name
         self.openings = enemy.openings
@@ -21,15 +28,19 @@ class Battle:
     def updateStatus(self, result):
         if result == "Success":
             self.points += 1
-            announce("The duel shifts in your favor!")
+            announce("The duel shifts in your favor! Score = " + str(self.points))
         if result == "Failure":
             self.points -= 1
-            announce("The tides turn against you!")
+            announce("The tides turn against you! Score = " + str(self.points))
+        if result == "Draw":
+            announce("You hold your ground! Score = " + str(self.points))
     def checkFight(self):
-        if self.points == 2:
-            announce(self.name + " accepts defeat!")
+        if self.points == 3:
+            reward = random.randrange(1, 11)
+            announce(self.name + " accepts defeat! You earn " + str(reward) + " coins!")
+            Battle.coins += reward
             return True
-        elif self.points == -2:
+        elif self.points == -3:
             announce(self.name + " chases you off with your tail between your legs!")
             return True
         else:
@@ -62,7 +73,10 @@ class Battle:
                 player = Battle.known_openings[choice]
                 player = self.openings.index(player)
                 insult = self.responses[player]
-                if insult in Battle.known_responses:
+                if choice == 0:
+                    announce(self.name + ": " + insult)
+                    self.updateStatus("Failure")
+                elif insult in Battle.known_responses:
                     announce(self.name + ": How dare you!")
                     self.updateStatus("Success")
                 else:
@@ -70,8 +84,7 @@ class Battle:
                     self.updateStatus("Failure")
                 self.initiative = True
             self.updateKnown(insult)
-            
-        
+                    
 class Enemy:
     def __init__(self, name, openings, responses, initiative):
         self.name = name
