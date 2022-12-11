@@ -14,7 +14,7 @@ def converse(character):
     while True:
         choice = menu(choices)
         announce(character.name + ' says: "' + responses[choice] + '"')
-        if choices[choice] == "Exit":
+        if choices[choice] == "Goodbye":
             return
 
 def shop(character):
@@ -33,10 +33,10 @@ def shop(character):
         price = character.inventory[item]
         if Coinpurse.coins >= price:
             Coinpurse.coins -= price
-            announce(character.name + 'says: "Here\'s your ' + item + '"')
+            announce(character.name + ' says: "Here\'s your ' + item + '"')
             return item
         else:
-            announce(character.name + 'says: Not enough coin')
+            announce(character.name + ' says: Not enough coin')
             return None
                 
         

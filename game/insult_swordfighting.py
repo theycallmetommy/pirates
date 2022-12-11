@@ -1,3 +1,4 @@
+from game import config
 from game.display import announce
 from game.display import menu
 from game.dialogue import Coinpurse
@@ -9,13 +10,13 @@ class Battle:
     known_responses = ["That the best you can do?"]
     __MASTER_LIST__ = {
     "Arrr!":"That the best you can do?",
-    "ExampleOpen1":"ExampleResponse1",
-    "ExampleOpen2":"ExampleResponse2",
-    "ExampleOpen3":"ExampleResponse3",
-    "ExampleOpen4":"ExampleResponse4",
-    "ExampleOpen5":"ExampleResponse5",
-    "ExampleOpen6":"ExampleResponse6",
-    "ExampleOpen7":"ExampleResponse7"
+    "You fight like a dairy Farmer!":"How appropriate. You fight like a cow!",
+    "People fall at my feet when they see me coming!":"Even BEFORE they smell your breath?",
+    "I once owned a dog that was smarter than you.":"He must have taught you everything you know.",
+    "Nobody's ever drawn blood from me and nobody ever will.":"You run THAT fast?",
+    "There are no words for how disgusting you are.":"Yes, there are. You just never learned them.",
+    "I've heard you are a contemptible sneak.":"Too bad no one's ever heard of YOU at all.",
+    "You have the manners of a beggar.":"I wanted to make sure you'd feel comfortable with me."
     } #dictionary of all opening/response pairings
     __SWORD__MASTER__LIMIT__ = 6
     def __init__(self, enemy):
@@ -24,6 +25,11 @@ class Battle:
         self.responses = enemy.responses
         self.initiative = enemy.initiative
         self.points = 0
+        self.lucky = False
+        c = random.choice(config.the_player.get_pirates())
+        if c.lucky == True:
+            self.lucky = True
+            announce("You feel " + c.get_name() + "'s luck helping you out!")
 
     def updateStatus(self, result):
         if result == "Success":
@@ -36,7 +42,7 @@ class Battle:
             announce("You hold your ground! Score = " + str(self.points))
     def checkFight(self):
         if self.points == 3:
-            reward = random.randrange(1, 11)
+            reward = random.randrange(5, 16)
             announce(self.name + " accepts defeat! You earn " + str(reward) + " coins!")
             Coinpurse.coins += reward
             return True
@@ -76,12 +82,24 @@ class Battle:
                 if choice == 0:
                     announce(self.name + ": " + insult)
                     self.updateStatus("Failure")
-                elif insult in Battle.known_responses:
-                    announce(self.name + ": How dare you!")
-                    self.updateStatus("Success")
-                else:
+                elif insult not in Battle.known_responses:
                     announce(self.name + ": " + insult)
                     self.updateStatus("Failure")
+                else:
+                    if self.lucky == True:
+                        if random.randrange(0, 10) == 0:
+                            announce(self.name + ': "' + insult + '"')
+                            self.updateStatus("Failure")
+                        else:
+                            announce(self.name + ": How dare you!")
+                            self.updateStatus("Success")
+                    else:
+                        if random.randrange(0, 4) == 0:
+                            announce(self.name + ': "' + insult + '"')
+                            self.updateStatus("Failure")
+                        else:
+                            announce(self.name + ": How dare you!")
+                            self.updateStatus("Success")
                 self.initiative = True
             self.updateKnown(insult)
                     
