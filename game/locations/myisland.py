@@ -158,7 +158,14 @@ class Tavern (location.SubLocation):
         if verb == "talk":
             converse(TavernKeep())
         if verb == "drink":
-            shop(TavernKeep())
+            item = shop(TavernKeep())
+            if item != None:
+                if item == "LuckyDrink":
+                    LuckyDrink().order()
+                if item == "SicknessDrink":
+                    SicknessDrink().order()
+                if item == "InsultDrink":
+                    InsultDrink().order()
 
 class House (location.SubLocation):
     def __init__ (self, m):
@@ -201,32 +208,64 @@ class TavernKeep(Character):
         }
         greeting = "Here to chat?"
         super().__init__("Tavernkeep", options, greeting)
-        self.shopgreeting = "Whatcha buying?"
+        self.shop_greeting = "Whatcha buying?"
         self.inventory = {
         "LuckyDrink":30,
         "SicknessDrink":10,
         "InsultDrink":15
         }
 
-# class Drink:
-    # def __init__(self, name, price):
-        # self.name = name
-        # self.price = price
-# class LuckyDrink(Drink):
-    # def __init__(self):
-        # super().__init__("LuckyDrink", 10)
-    # def order(self):
-        # if Coinpurse.coins >= self.price:
-            # Coinpurse.coins -= self.price
-            # lucky.LuckyDay().process()
-# class SicknessDrink(Drink):
-    # def __init__(self):
-        # super().__init__("SicknessDrink", 10)
-        # #cures one crewmate of Sick
-# class InsultDrink(Drink):
-    # def __init__(self):
-        # super().__init__("InsultDrink", 10)
-        # #teaches player one new opening insult
+class Drink:
+    def __init__(self, description, effect):
+        self.description = description
+        self.effect = effect
+    def order(self):
+        announce(self.description)
+        announce(self.effect)
+        
+class LuckyDrink(Drink):
+    def __init__(self):
+        c = random.choice(config.the_player.get_pirates())
+        c.lucky = True
+        effect = c.get_name() + " is feeling lucky!"
+        super().__init__("The crew finishes up their drinks, picking some flecks of edible gold out of their teeth", effect)
+class SicknessDrink(Drink):
+    def __init__(self):
+        cured = []
+        sickened = []
+        effect = ""
+        for c in config.the_player.get_pirates():
+            if random.randrange(1, 101) > 80:
+                if c.sick == False:
+                    c.set_sickness(True)
+                    sickened.append(c.get_name())
+            else:
+                if c.sick == True:
+                    c.set_sickness(False)
+                    cured.append(c.get_name())
+        if cured != []:
+            effect += " and ".join(cured)
+            effect += " felt better! "
+        if sickened != []:
+            effect += " and ".join(sickened)
+            effect += " felt worse!"
+        if effect == "":
+            effect = "You don't think anything happened..."
+        super().__init__("The drink tastes like toothpaste, but it goes down easy enough.", effect)
+class InsultDrink(Drink):
+    def __init__(self):
+        effect = ""
+        learned = False
+        for k in Battle.__MASTER_LIST__.keys():
+            if learned == False:
+                if k not in Battle.known_openings:
+                    learned = True
+                    Battle.known_openings.append(k)
+                    Battle.known_responses.append(Battle.__MASTER_LIST__[k])
+                    effect = "You feel like you've gotten better at insulting people."
+        if effect == "":
+            effect = "You don't feel like anything happened..."
+        super().__init__("You're not sure if a drink can taste insulting, but if it could, it would taste like this.", effect)
 
 class Cartographer(Character):
     def __init__(self):
@@ -286,12 +325,17 @@ class MasterBattle(Battle):
         else:
             return False
     def fight(self):
+        announce("Challenged the Sword Master!")
+        self.lucky = False
+        for c in config.the_player.get_pirates():
+            if c.lucky == True:
+                self.lucky = True
+                announce("You feel " + c.get_name() + "'s luck helping you out!")
         points = 0
         self.used_openings = []
         self.valid_openings = []
         for k in Battle.__MASTER_LIST__.keys():
             self.valid_openings.append(k)
-        announce("Challenged the Sword Master!")
         while self.checkFight() != True:
             if self.initiative == True:
                 insult = random.choice(self.openings[1:])
@@ -318,11 +362,19 @@ class MasterBattle(Battle):
                         self.used_openings.append(player)
                         player = self.valid_openings.index(player)
                         insult = self.responses[player]
-                        if random.randrange(0, 2) == 0:
-                            announce(self.name + ": " + insult)
-                            self.updateStatus("Failure")
-                        else:
-                            announce(self.name + ": A lucky blow, but you're still no match for my rapier wit!")
-                            self.updateStatus("Draw")
+                        if self.lucky == True:
+                            if random.randrange(0, 5) == 0:
+                               announce(self.name + ": " + insult)
+                               self.updateStatus("Failure")
+                            else:
+                                announce(self.name + ": A lucky blow, but you're still no match for my rapier wit!")
+                                self.updateStatus("Draw")
+                        else:   
+                            if random.randrange(0, 2) == 0:
+                                announce(self.name + ": " + insult)
+                                self.updateStatus("Failure")
+                            else:
+                                announce(self.name + ": A lucky blow, but you're still no match for my rapier wit!")
+                                self.updateStatus("Draw")
                 self.initiative = True
         

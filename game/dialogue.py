@@ -23,7 +23,7 @@ def shop(character):
     for k,v in character.inventory.items():
         items.append(k)
         choices.append(str(k) + " - " + str(v))
-    announce(character.name + ' says: "' + character.shopgreeting + '"')
+    announce(character.name + ' says: "' + character.shop_greeting + '"')
     choice = menu(choices)
     if choices[choice] == "Exit":
         announce("TestBye")
