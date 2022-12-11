@@ -296,7 +296,7 @@ class InsultDrink(Drink):
 class Cartographer(Character):
     def __init__(self):
         options = {
-        "":"",
+        'Can I buy a map from you?":"With what? Stan\'s fancy "Treasure Coins"? No thank you, I think I\'ll be fine without them.',
         "Do you happen to know where my home port is?":"No offense to you, but I'm not exactly keen on giving out maps to random groups of obvious pirates. Perhaps if you could make a name for yourself, that could change.",
         "Exit":"Well, have a good day then, come back if you need anything!"
         }
@@ -307,7 +307,7 @@ class Cartographer(Character):
 
 class Pirate(Enemy):
     def __init__(self):
-        n = random.choice(["john", "jon", "jhon"])
+        n = random.choice(["John", "Carla", "Cobb", "Otis", "Biff", "Estevan", "Meathook", "Lemonhead"])
         o = []
         r = []
         for k,v in Battle.__MASTER_LIST__.items():
