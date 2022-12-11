@@ -1,6 +1,9 @@
 from game.display import announce
 from game.display import menu
 
+class Coinpurse:
+    coins = 0
+
 def converse(character):
     choices = []
     responses = []
@@ -13,6 +16,30 @@ def converse(character):
         announce(character.name + ' says: "' + responses[choice] + '"')
         if choices[choice] == "Exit":
             return
+
+def shop(character):
+    choices = []
+    items = []
+    for k,v in character.inventory.items():
+        items.append(k)
+        choices.append(str(k) + " - " + str(v))
+    announce(character.name + ' says: "' + character.shopgreeting + '"')
+    choice = menu(choices)
+    if choices[choice] == "Exit":
+        announce("TestBye")
+        return None
+    else:
+        item = items[choice]
+        price = character.inventory[item]
+        if Coinpurse.coins >= price:
+            Coinpurse.coins -= price
+            announce(character.name + 'says: "Here\'s your ' + item + '"')
+            return item
+        else:
+            announce(character.name + 'says: Not enough coin')
+            return None
+                
+        
     
 
 

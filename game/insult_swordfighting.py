@@ -1,10 +1,10 @@
 from game.display import announce
 from game.display import menu
+from game.dialogue import Coinpurse
 import random
 
 
 class Battle:
-    coins = 0
     known_openings = ["Arrr!"]
     known_responses = ["That the best you can do?"]
     __MASTER_LIST__ = {
@@ -38,7 +38,7 @@ class Battle:
         if self.points == 3:
             reward = random.randrange(1, 11)
             announce(self.name + " accepts defeat! You earn " + str(reward) + " coins!")
-            Battle.coins += reward
+            Coinpurse.coins += reward
             return True
         elif self.points == -3:
             announce(self.name + " chases you off with your tail between your legs!")

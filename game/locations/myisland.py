@@ -1,6 +1,8 @@
 import random
 from game.dialogue import converse
+from game.dialogue import shop
 from game.dialogue import Character
+from game.dialogue import Coinpurse
 from game import location
 from game import config
 from game.display import announce
@@ -60,7 +62,7 @@ class Port_with_ship (location.SubLocation):
         elif (verb == "east" or verb == "west"):
             announce ("You look off to the " + verb + ". It's an empty beach. Surely you have something better to do, right?")
         elif verb == "coin":
-            announce ("You have " + str(Battle.coins) + " Macaque Island Treasure Coins.")
+            announce ("You have " + str(Coinpurse.coins) + " Macaque Island Treasure Coins.")
         elif verb == "talk":
             announce ("You approach the man, who gleefully smiles at your approach. What would you like to say?")
             converse(Stan())
@@ -70,6 +72,7 @@ class Port_with_ship (location.SubLocation):
                     Battle.known_openings.append(k)
                 if v not in Battle.known_responses:
                     Battle.known_responses.append(v)
+            Coinpurse.coins = 999
             announce ("Cheater Cheater Pumpkin Eater")
             
 
@@ -99,7 +102,7 @@ class Field (location.SubLocation):
         if verb == "west":
             config.the_player.next_loc = self.main_location.locations["tavern"]
         elif verb == "coin":
-            announce ("You have " + str(Battle.coins) + " Macaque Island Treasure Coins.")
+            announce ("You have " + str(Coinpurse.coins) + " Macaque Island Treasure Coins.")
         if verb == "fight":
             battle = Battle(Pirate())
             battle.fight()
@@ -124,7 +127,7 @@ class Mountaintop (location.SubLocation):
         if verb == "south":
             config.the_player.next_loc = self.main_location.locations["field"]
         elif verb == "coin":
-            announce ("You have " + str(Battle.coins) + " Macaque Island Treasure Coins.")
+            announce ("You have " + str(Coinpurse.coins) + " Macaque Island Treasure Coins.")
         if verb == "challenge":
             if len(Battle.known_openings) < Battle.__SWORD__MASTER__LIMIT__:
                 announce("The Sword Master laughs at your challenge. It seems that you're not even worth her time at your skill level.")
@@ -151,11 +154,11 @@ class Tavern (location.SubLocation):
         if verb == "east":
             config.the_player.next_loc = self.main_location.locations["field"]
         elif verb == "coin":
-            announce ("You have " + str(Battle.coins) + " Macaque Island Treasure Coins.")
+            announce ("You have " + str(Coinpurse.coins) + " Macaque Island Treasure Coins.")
         if verb == "talk":
-            converse(TavernKeep(False))
+            converse(TavernKeep())
         if verb == "drink":
-            converse(TavernKeep(True))
+            shop(TavernKeep())
 
 class House (location.SubLocation):
     def __init__ (self, m):
@@ -174,7 +177,7 @@ class House (location.SubLocation):
         if verb == "west":
             config.the_player.next_loc = self.main_location.locations["field"]
         elif verb == "coin":
-            announce ("You have " + str(Battle.coins) + " Macaque Island Treasure Coins.")
+            announce ("You have " + str(Coinpurse.coins) + " Macaque Island Treasure Coins.")
         if verb == "talk":
             converse(Cartographer())
         
@@ -189,40 +192,41 @@ class Stan(Character):
         super().__init__("Stan", options, "Hello!")
 
 class TavernKeep(Character):
-    def __init__(self, shop):
-        if shop == True:
-            options = {
-            "LuckyDrink":"",
-            "SicknessDrink":"",
-            "InsultDrink":"",
-            "Exit":""
-            }
-            greeting = "Whatcha buying?"
-        else:
-            options = {
-            "":"",
-            "":"",
-            "Exit":""
-            }
-            greeting = "Here to chat?"
+    def __init__(self):
+        options = {
+        "":"",
+        "":"",
+        "":"",
+        "Exit":""
+        }
+        greeting = "Here to chat?"
         super().__init__("Tavernkeep", options, greeting)
+        self.shopgreeting = "Whatcha buying?"
+        self.inventory = {
+        "LuckyDrink":30,
+        "SicknessDrink":10,
+        "InsultDrink":15
+        }
 
-class Drink:
-    def __init__(self, name, price):
-        self.name = name
-        self.price = price
-class LuckyDrink(Drink):
-    def __init__(self):
-        super().__init__("LuckyDrink", 10)
-        #gives random crewmate Lucky
-class SicknessDrink(Drink):
-    def __init__(self):
-        super().__init__("SicknessDrink", 10)
-        #cures one crewmate of Sick
-class InsultDrink(Drink):
-    def __init__(self):
-        super().__init__("InsultDrink", 10)
-        #teaches player one new opening insult
+# class Drink:
+    # def __init__(self, name, price):
+        # self.name = name
+        # self.price = price
+# class LuckyDrink(Drink):
+    # def __init__(self):
+        # super().__init__("LuckyDrink", 10)
+    # def order(self):
+        # if Coinpurse.coins >= self.price:
+            # Coinpurse.coins -= self.price
+            # lucky.LuckyDay().process()
+# class SicknessDrink(Drink):
+    # def __init__(self):
+        # super().__init__("SicknessDrink", 10)
+        # #cures one crewmate of Sick
+# class InsultDrink(Drink):
+    # def __init__(self):
+        # super().__init__("InsultDrink", 10)
+        # #teaches player one new opening insult
 
 class Cartographer(Character):
     def __init__(self):
