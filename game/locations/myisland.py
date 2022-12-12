@@ -55,7 +55,7 @@ class Port_with_ship (location.SubLocation):
         self.talked_to_stan = False
 
     def enter (self):
-        description = "You arrive at a small port. Your ship is at anchor at a small dock to the south, and a path forward to the north. There is a tall, cheerful looking man to TALK to waiting at a stand on the dock."
+        description = "You arrive at a small port. Your ship is at anchor at a small dock to the south, and a path forward to the NORTH. There is a tall, cheerful looking man to TALK to waiting at a stand on the dock."
         if self.talked_to_stan == False:
             description += '\nThe man is wearing a bright purple and blue plaid jacket, and wearing an oversized white hat. He stands at a stand with a sign that says "Stan\'s Previously Owned Islands".'
         announce (description)
@@ -103,7 +103,7 @@ class Field (location.SubLocation):
         self.events.append (coins.FindCoins())
         
     def enter (self):
-        description = 'You walk into an open field, full of pirates looking for a FIGHT. To the north, you see a large mountain. To the east, you see a winding path towards some houses. To the west, you see a building with a sign that reads "Scumm Bar".'
+        description = 'You walk into an open field, full of pirates looking for a FIGHT. To the NORTH, you see a large mountain. To the EAST, you see a winding path towards some houses. To the WEST, you see a building with a sign that reads "Scumm Bar".'
         announce (description)
     def process_verb (self, verb, cmd_list, nouns):
         if verb == "south":
@@ -132,7 +132,7 @@ class Mountaintop (location.SubLocation):
         self.verbs['challenge'] = self
     
     def enter(self):
-        description = 'You make your way up the mountain and find yourself at a large, flat arena at its peak. The path back to the base snakes down to the south.'
+        description = 'You make your way up the mountain and find yourself at a large, flat arena at its peak. The path back to the base snakes down to the SOUTH.'
         if Character.sword_master_beaten == False:
             description += ' A skilled swordswoman stands at its center, awaiting a worthy CHALLENGE.'
         else:
@@ -164,7 +164,7 @@ class Tavern (location.SubLocation):
         self.events.append (coins.FindCoins())
         
     def enter(self):
-        description = "You enter the Scumm Bar. A rotund man in a chef's hat an apron stands behind the bar, if you're looking for someone to TALK to. Otherwise, you can have a seat and get a DRINK. The door behind you leads east back to the field."
+        description = "You enter the Scumm Bar. A rotund man in a chef's hat an apron stands behind the bar, if you're looking for someone to TALK to. Otherwise, you can have a seat and get a DRINK. The door behind you leads EAST back to the field."
         announce(description)
     
     def process_verb (self, verb, cmd_list, nouns):
@@ -194,7 +194,7 @@ class House (location.SubLocation):
         self.verbs['talk'] = self
 
     def enter(self):
-        description = "You follow the path to the house of a local cartographer, who sits behind a desk studying his maps. Perhaps you can TALK to hime and ask if he has an idea where your home port is. Otherwise, the path back leads you to the west."
+        description = "You follow the path to the house of a local cartographer, who sits behind a desk studying his maps. Perhaps you can TALK to hime and ask if he has an idea where your home port is. Otherwise, the path back leads you to the WEST."
         announce(description)
     
     def process_verb (self, verb, cmd_list, nouns):
@@ -216,9 +216,9 @@ class Stan(Character):
             hint = "Would you look at that? The Sword Master themself is asking little old Stan here for help! You've just about done all there is to do on Macaque Island for now, I reckon, but I hope you continue to have a great time around here!"
         options = {
         "What is this place?":"It's your lucky day, because you've just landed on the world famous Macaque Island! Currently under the ownership of one Stan S Stanman, but I'm always happy to look at buyers!",
-        "What is there to do here?":"The island's still under renovation from the previous owners, but there's still plenty of activities to sink your teeth into. You can test your wit against the dastardly pirates roaming the place, have a drink at the SCUMM Bar, or even challenge the legendary Sword Master herself!",
+        "What is there to do here?":"The island's still under renovation from the previous owners, but there's still plenty of activities to sink your teeth into. You can test your wit against the dastardly pirates roaming the place, have a drink at the Scumm Bar, or even challenge the legendary Sword Master herself!",
         "Do you know where my home port is?":"I barely know who YOU are! I'm Stan by the way, pleasure to meet you! Anyways, I suppose that maybe the local cartographer might be able to help you out with that. But why would you need some dusty old map, when you've got all the fun you can ask for on Macaque Island?",
-        "Do you have anything to trade?":"Oh no, not me at the very least. The SCUMM Bar is always open though, just be sure to stock up on Macaque Island Treasure Coins from the pirates. It's the only kind of coin we take out here!",
+        "Do you have anything to trade?":"Oh no, not me at the very least. The Scumm Bar is always open though, just be sure to stock up on Macaque Island Treasure Coins from the pirates. It's the only kind of COIN we take out here!",
         "I need some help, Stan.":hint,
         "Goodbye":"You folk have fun now, enjoy the wonderful Macaque Island!"
         }
@@ -229,10 +229,10 @@ class TavernKeep(Character):
         options = {
         "I'm here for a drink!":"Well then, how's about you actually sit down and ask for a DRINK, 'stead of walkin' up and talkin' to me like this?",
         "What kind of drinks do you serve here?":"Well, We've got a few good drinks 'round here, all me own personal recipes too! There's one that I sprinkle a bit o' gold in to give you some good luck. There's one I mix with the medicine we pick up from Stan's place, just be careful about the expired stuff. Then there's my favorite one, mixed it in with some gasoline to really give ye that flamin' tongue, ye see!",
-        "What's a Macaque Island Treasure Coin?":"Issat what 'e wants to call 'em now? Sounds like one of Stan's ol' schemes to make some money offa this place. We take em just like ordinary coin 'round here, so feel free to bring all ye manage to get here.",
+        "What's a Macaque Island Treasure Coin?":"Issat what 'e wants to call 'em now? Sounds like one of Stan's ol' schemes to make some money offa this place. We take em just like ordinary COIN 'round here, so feel free to bring all ye manage to get here.",
         "Goodbye":"Come back when ye feel like gettin' a DRINK next time!"
         }
-        greeting = "Welcome to the SCUMM Bar, mate. You 'ere to chat?"
+        greeting = "Welcome to the Scumm Bar, mate. You 'ere to chat?"
         super().__init__("Tavernkeep", options, greeting)
         self.shop_greeting = "Whatcha' buying?"
         self.inventory = {
@@ -350,7 +350,6 @@ class MasterBattle(Battle):
             return True
         elif self.points == -2:
             announce(self.name + " bests you in combat!")
-            #punishment for failure? sickness maybe?
             return True
         else:
             return False
