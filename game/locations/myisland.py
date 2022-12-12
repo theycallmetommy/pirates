@@ -296,12 +296,12 @@ class InsultDrink(Drink):
 class Cartographer(Character):
     def __init__(self):
         options = {
-        'Can I buy a map from you?":"With what? Stan\'s fancy "Treasure Coins"? No thank you, I think I\'ll be fine without them.',
+        'Can I buy a map from you?':"With what? Stan's fancy \"Treasure Coins\"? No thank you, I think I'll be fine without them.",
         "Do you happen to know where my home port is?":"No offense to you, but I'm not exactly keen on giving out maps to random groups of obvious pirates. Perhaps if you could make a name for yourself, that could change.",
-        "Exit":"Well, have a good day then, come back if you need anything!"
+        "Goodbye":"Well, have a good day then, come back if you need anything!"
         }
         if Character.sword_master_beaten == True:
-            options["Do you happen to know where my home port is?"] = "Well, if the Sword Master asks for a map, I suppose I can supply one\nYour home coordinates are " + "HOW THE FUCK DO I GET THE HOME COORDINATES?"
+            options["Do you happen to know where my home port is?"] = "Well, if the Sword Master asks for a map, I suppose I can supply one\nYour home coordinates are " + str(config.the_player.world.homex) + ", " + str(config.the_player.world.homey)
             
         super().__init__("Cartographer", options, "Well Hello!")
 
