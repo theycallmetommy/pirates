@@ -55,7 +55,7 @@ class Port_with_ship (location.SubLocation):
         self.talked_to_stan = False
 
     def enter (self):
-        description = "You arrive at a small port. Your ship is at anchor at a small dock to the south. There is a tall, cheerful looking man waiting at a stand on the dock."
+        description = "You arrive at a small port. Your ship is at anchor at a small dock to the south, and a path forward to the north. There is a tall, cheerful looking man to TALK to waiting at a stand on the dock."
         if self.talked_to_stan == False:
             description += '\nThe man is wearing a bright purple and blue plaid jacket, and wearing an oversized white hat. He stands at a stand with a sign that says "Stan\'s Previously Owned Islands".'
         announce (description)
@@ -83,7 +83,7 @@ class Port_with_ship (location.SubLocation):
                 if v not in Battle.known_responses:
                     Battle.known_responses.append(v)
             Coinpurse.coins = 999
-            announce ("Cheater Cheater Pumpkin Eater")
+            announce ("Hey, don't you know that's cheating?")
             
 
 
@@ -103,7 +103,7 @@ class Field (location.SubLocation):
         self.events.append (coins.FindCoins())
         
     def enter (self):
-        description = 'You walk into an open field, full of pirates looking for a fight. To the north, you see a large mountain. To the east, you see a winding path. To the west, you see a building with a sign that reads "Scumm Bar".'
+        description = 'You walk into an open field, full of pirates looking for a FIGHT. To the north, you see a large mountain. To the east, you see a winding path towards some houses. To the west, you see a building with a sign that reads "Scumm Bar".'
         announce (description)
     def process_verb (self, verb, cmd_list, nouns):
         if verb == "south":
@@ -134,9 +134,9 @@ class Mountaintop (location.SubLocation):
     def enter(self):
         description = 'You make your way up the mountain and find yourself at a large, flat arena at its peak. The path back to the base snakes down to the south.'
         if Character.sword_master_beaten == False:
-            description += ' A skilled swordswoman stands at its center, awaiting a worthy challenge.'
+            description += ' A skilled swordswoman stands at its center, awaiting a worthy CHALLENGE.'
         else:
-            description += ' the Former Sword Master sits on the sidelines, awaiting a rematch.'
+            description += ' the Former Sword Master sits on the sidelines, still ready for a CHALLENGE.'
         announce(description)
         
     def process_verb (self, verb, cmd_list, nouns):
@@ -146,7 +146,7 @@ class Mountaintop (location.SubLocation):
             announce ("You have " + str(Coinpurse.coins) + " Macaque Island Treasure Coins.")
         if verb == "challenge":
             if len(Battle.known_openings) < Battle.__SWORD__MASTER__LIMIT__:
-                announce("The Sword Master laughs at your challenge. It seems that you're not even worth her time at your skill level.")
+                announce("The Sword Master laughs at your CHALLENGE. It seems that you're not even worth her time at your skill level.")
             else:
                 battle = MasterBattle(SwordMaster())
                 battle.fight()
@@ -164,7 +164,7 @@ class Tavern (location.SubLocation):
         self.events.append (coins.FindCoins())
         
     def enter(self):
-        description = "You enter the Scumm Bar. Unfortunately, the programmer doesn't remember what the Scumm Bar looks like at the moment, so there's nobody to talk to, and nothing to drink. Feel free to show yourself to the door and back east"
+        description = "You enter the Scumm Bar. A rotund man in a chef's hat an apron stands behind the bar, if you're looking for someone to TALK to. Otherwise, you can have a seat and get a DRINK. The door behind you leads east back to the field."
         announce(description)
     
     def process_verb (self, verb, cmd_list, nouns):
@@ -194,7 +194,7 @@ class House (location.SubLocation):
         self.verbs['talk'] = self
 
     def enter(self):
-        description = "You follow the path to the house of a local cartographer, who sits behind a desk studying his maps. Perhaps he has an idea where your home port is. Otherwise, the path back leads you to the west."
+        description = "You follow the path to the house of a local cartographer, who sits behind a desk studying his maps. Perhaps you can TALK to hime and ask if he has an idea where your home port is. Otherwise, the path back leads you to the west."
         announce(description)
     
     def process_verb (self, verb, cmd_list, nouns):
